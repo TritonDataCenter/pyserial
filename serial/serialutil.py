@@ -4,6 +4,7 @@
 #
 # This file is part of pySerial. https://github.com/pyserial/pyserial
 # (C) 2001-2016 Chris Liechti <cliechti@gmx.net>
+# Copyright (c) 2018, Joyent, Inc.
 #
 # SPDX-License-Identifier:    BSD-3-Clause
 
@@ -263,7 +264,7 @@ class SerialBase(io.RawIOBase):
         Change the port.
         """
         if port is not None and not isinstance(port, basestring):
-            raise ValueError('"port" must be None or a string, not {}'.format(type(port)))
+            raise ValueError('"port" must be None or a string, not {0}'.format(type(port)))
         was_open = self.is_open
         if was_open:
             self.close()
@@ -687,9 +688,9 @@ class SerialBase(io.RawIOBase):
 if __name__ == '__main__':
     import sys
     s = SerialBase()
-    sys.stdout.write('port name:  {}\n'.format(s.name))
-    sys.stdout.write('baud rates: {}\n'.format(s.BAUDRATES))
-    sys.stdout.write('byte sizes: {}\n'.format(s.BYTESIZES))
-    sys.stdout.write('parities:   {}\n'.format(s.PARITIES))
-    sys.stdout.write('stop bits:  {}\n'.format(s.STOPBITS))
-    sys.stdout.write('{}\n'.format(s))
+    sys.stdout.write('port name:  {0}\n'.format(s.name))
+    sys.stdout.write('baud rates: {0}\n'.format(s.BAUDRATES))
+    sys.stdout.write('byte sizes: {0}\n'.format(s.BYTESIZES))
+    sys.stdout.write('parities:   {0}\n'.format(s.PARITIES))
+    sys.stdout.write('stop bits:  {0}\n'.format(s.STOPBITS))
+    sys.stdout.write('{0}\n'.format(s))

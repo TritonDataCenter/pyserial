@@ -4,6 +4,7 @@
 #
 # This file is part of pySerial. https://github.com/pyserial/pyserial
 # (C) 2001-2017 Chris Liechti <cliechti@gmx.net>
+# Copyright (c) 2018, Joyent, Inc.
 #
 # SPDX-License-Identifier:    BSD-3-Clause
 
@@ -32,7 +33,7 @@ else:
     elif os.name == 'java':
         from serial.serialjava import Serial
     else:
-        raise ImportError("Sorry: no implementation for your platform ('{}') available".format(os.name))
+        raise ImportError("Sorry: no implementation for your platform ('{0}') available".format(os.name))
 
 
 protocol_handler_packages = [
@@ -68,7 +69,7 @@ def serial_for_url(url, *args, **kwargs):
         # if it is an URL, try to import the handler module from the list of possible packages
         if '://' in url_lowercase:
             protocol = url_lowercase.split('://', 1)[0]
-            module_name = '.protocol_{}'.format(protocol)
+            module_name = '.protocol_{0}'.format(protocol)
             for package_name in protocol_handler_packages:
                 try:
                     importlib.import_module(package_name)

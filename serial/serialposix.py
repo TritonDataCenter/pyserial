@@ -4,6 +4,7 @@
 #
 # This file is part of pySerial. https://github.com/pyserial/pyserial
 # (C) 2001-2016 Chris Liechti <cliechti@gmx.net>
+# Copyright (c) 2018, Joyent, Inc.
 #
 # SPDX-License-Identifier:    BSD-3-Clause
 #
@@ -134,7 +135,7 @@ if plat[:5] == 'linux':    # Linux (confirmed)  # noqa
                 # set serial_struct
                 fcntl.ioctl(self.fd, termios.TIOCSSERIAL, buf)
             except IOError as e:
-                raise ValueError('Failed to update ASYNC_LOW_LATENCY flag to {}: {}'.format(low_latency_settings, e))
+                raise ValueError('Failed to update ASYNC_LOW_LATENCY flag to {0}: {1}'.format(low_latency_settings, e))
 
         def _set_special_baudrate(self, baudrate):
             # right size is 44 on x86_64, allow for some growth
@@ -150,7 +151,7 @@ if plat[:5] == 'linux':    # Linux (confirmed)  # noqa
                 # set serial_struct
                 fcntl.ioctl(self.fd, TCSETS2, buf)
             except IOError as e:
-                raise ValueError('Failed to set custom baud rate ({}): {}'.format(baudrate, e))
+                raise ValueError('Failed to set custom baud rate ({0}): {1}'.format(baudrate, e))
 
         def _set_rs485_mode(self, rs485_settings):
             buf = array.array('i', [0] * 8)  # flags, delaytx, delayrx, padding
@@ -178,7 +179,7 @@ if plat[:5] == 'linux':    # Linux (confirmed)  # noqa
                     buf[0] = 0  # clear SER_RS485_ENABLED
                 fcntl.ioctl(self.fd, TIOCSRS485, buf)
             except IOError as e:
-                raise ValueError('Failed to set RS485 mode: {}'.format(e))
+                raise ValueError('Failed to set RS485 mode: {0}'.format(e))
 
 
 elif plat == 'cygwin':       # cygwin/win32 (confirmed)
@@ -288,7 +289,7 @@ class Serial(SerialBase, PlatformSpecific):
             self.fd = os.open(self.portstr, os.O_RDWR | os.O_NOCTTY | os.O_NONBLOCK)
         except OSError as msg:
             self.fd = None
-            raise SerialException(msg.errno, "could not open port {}: {}".format(self._port, msg))
+            raise SerialException(msg.errno, "could not open port {0}: {1}".format(self._port, msg))
         #~ fcntl.fcntl(self.fd, fcntl.F_SETFL, 0)  # set blocking
 
         try:
@@ -332,7 +333,7 @@ class Serial(SerialBase, PlatformSpecific):
                 try:
                     fcntl.flock(self.fd, fcntl.LOCK_EX | fcntl.LOCK_NB)
                 except IOError as msg:
-                    raise SerialException(msg.errno, "Could not exclusively lock port {}: {}".format(self._port, msg))
+                    raise SerialException(msg.errno, "Could not exclusively lock port {0}: {1}".format(self._port, msg))
             else:
                 fcntl.flock(self.fd, fcntl.LOCK_UN)
 
@@ -346,7 +347,7 @@ class Serial(SerialBase, PlatformSpecific):
             orig_attr = termios.tcgetattr(self.fd)
             iflag, oflag, cflag, lflag, ispeed, ospeed, cc = orig_attr
         except termios.error as msg:      # if a port is nonexistent but has a /dev file, it'll fail here
-            raise SerialException("Could not configure port: {}".format(msg))
+            raise SerialException("Could not configure port: {0}".format(msg))
         # set up raw mode / no echo / binary
         cflag |= (termios.CLOCAL | termios.CREAD)
         lflag &= ~(termios.ICANON | termios.ECHO | termios.ECHOE |
@@ -365,7 +366,7 @@ class Serial(SerialBase, PlatformSpecific):
 
         # setup baud rate
         try:
-            ispeed = ospeed = getattr(termios, 'B{}'.format(self._baudrate))
+            ispeed = ospeed = getattr(termios, 'B{0}'.format(self._baudrate))
         except AttributeError:
             try:
                 ispeed = ospeed = self.BAUDRATE_CONSTANTS[self._baudrate]
@@ -529,13 +530,13 @@ class Serial(SerialBase, PlatformSpecific):
                 # OSError ignore BlockingIOErrors and EINTR. other errors are shown
                 # https://www.python.org/dev/peps/pep-0475.
                 if e.errno not in (errno.EAGAIN, errno.EALREADY, errno.EWOULDBLOCK, errno.EINPROGRESS, errno.EINTR):
-                    raise SerialException('read failed: {}'.format(e))
+                    raise SerialException('read failed: {0}'.format(e))
             except select.error as e:
                 # this is for Python 2.x
                 # ignore BlockingIOErrors and EINTR. all errors are shown
                 # see also http://www.python.org/dev/peps/pep-3151/#select
                 if e[0] not in (errno.EAGAIN, errno.EALREADY, errno.EWOULDBLOCK, errno.EINPROGRESS, errno.EINTR):
-                    raise SerialException('read failed: {}'.format(e))
+                    raise SerialException('read failed: {0}'.format(e))
             if timeout.expired():
                 break
         return bytes(read)
@@ -591,13 +592,13 @@ class Serial(SerialBase, PlatformSpecific):
                 # OSError ignore BlockingIOErrors and EINTR. other errors are shown
                 # https://www.python.org/dev/peps/pep-0475.
                 if e.errno not in (errno.EAGAIN, errno.EALREADY, errno.EWOULDBLOCK, errno.EINPROGRESS, errno.EINTR):
-                    raise SerialException('write failed: {}'.format(e))
+                    raise SerialException('write failed: {0}'.format(e))
             except select.error as e:
                 # this is for Python 2.x
                 # ignore BlockingIOErrors and EINTR. all errors are shown
                 # see also http://www.python.org/dev/peps/pep-3151/#select
                 if e[0] not in (errno.EAGAIN, errno.EALREADY, errno.EWOULDBLOCK, errno.EINPROGRESS, errno.EINTR):
-                    raise SerialException('write failed: {}'.format(e))
+                    raise SerialException('write failed: {0}'.format(e))
             if not timeout.is_non_blocking and timeout.expired():
                 raise writeTimeoutError
         return length - len(d)
@@ -812,7 +813,7 @@ class VTIMESerial(Serial):
             orig_attr = termios.tcgetattr(self.fd)
             iflag, oflag, cflag, lflag, ispeed, ospeed, cc = orig_attr
         except termios.error as msg:      # if a port is nonexistent but has a /dev file, it'll fail here
-            raise serial.SerialException("Could not configure port: {}".format(msg))
+            raise serial.SerialException("Could not configure port: {0}".format(msg))
 
         if vtime < 0 or vtime > 255:
             raise ValueError('Invalid vtime: {!r}'.format(vtime))
