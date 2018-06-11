@@ -51,7 +51,7 @@ version = find_version('serial', '__init__.py')
 
 
 setup(
-    name="pyserial",
+    name="serial",
     description="Python Serial Port Extension",
     version=version,
     author="Chris Liechti",
